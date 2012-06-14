@@ -1,16 +1,17 @@
-function [ m r ] = CreateData(num_stocks, num_days, num_use)
+function [ m r ] = CreateData(num_stocks, num_days, num_use, record)
 %%Generates data for a given number of stocks over a given number of days
-%%The generated data is also written to the text files, 
+%%The generated data can also be written to the text files, 
 %%'RandomPriceData.txt'and 'RandomUseData.txt'
 
 %Parameters    
 %num_stocks - # of stocks to generate data for
 %num_days - # of days to generate data for
 %num_use - # of stocks that will have nonzero use values in any time period
+%record - flag indicating whether data should be written to file or not
 
 %Return Values
-%m - price data for num_stocks over num_days
-%r - use data for num_stocks over num_days
+%m - price data represented as a matrix of dates and prices
+%r - use data represented as dates and a zero and non-zero matrix
 
     %Assertion to prevent indexing errors
     assert(num_use < num_stocks);
@@ -25,8 +26,8 @@ function [ m r ] = CreateData(num_stocks, num_days, num_use)
     end
     
     %Lower and upper limits for random prices generated
-    lower = 10;
-    upper = 100;
+    lower = 0;
+    upper = 50;
     
     %Generate random numbers to use as prices for the stocks
     rand_nums = rand(num_days, num_stocks);
@@ -34,9 +35,6 @@ function [ m r ] = CreateData(num_stocks, num_days, num_use)
 
     %Concatenate dates and rand_num matrices to form price data matrix m
     m = [dates rand_nums];
-    
-    %Write the data to a text file
-    dlmwrite('RandomPriceData.txt', m, 'delimiter', '\t');
     
     %%%%%Generating use data%%%%%
     
@@ -62,8 +60,11 @@ function [ m r ] = CreateData(num_stocks, num_days, num_use)
     %Concatenate dates and use_matrix to form use data matrix r
     r = [dates use_matrix];
     
-    %Write the data to a text file
-    dlmwrite('RandomUseData.txt', r, 'delimiter', '\t');
+    if (record)
+        %Write generated data to text files
+        dlmwrite('RandomPriceData.txt', m, 'delimiter', '\t');
+        dlmwrite('RandomUseData.txt', r, 'delimiter', '\t');
+    end
     
 %    %Subfunction for writing data matrices to text files
 %     function [] = WriteData(filename, data)

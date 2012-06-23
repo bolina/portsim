@@ -27,7 +27,7 @@ function [ m r ] = CreateData(num_stocks, num_days, num_use, record)
     
     %Lower and upper limits for random prices generated
     lower = 0;
-    upper = 50;
+    upper = 1;
     
     %Generate random numbers to use as prices for the stocks
     rand_nums = rand(num_days, num_stocks);
@@ -65,25 +65,5 @@ function [ m r ] = CreateData(num_stocks, num_days, num_use, record)
         dlmwrite('RandomPriceData.txt', m, 'delimiter', '\t');
         dlmwrite('RandomUseData.txt', r, 'delimiter', '\t');
     end
-    
-%    %Subfunction for writing data matrices to text files
-%     function [] = WriteData(filename, data)
-%         %Open or create a text file for writing
-%         data_file = fopen(filename, 'w');
-%     
-%         %Write the generated data to the text file
-%         for row=1:num_days
-%             for col=1:num_stocks+1
-%                 if (col==1)
-%                  %Use datestr() to convert the datenum to a string
-%                     fprintf(data_file, '%s ', datestr(data(row,col)));
-%                 else
-%                     fprintf(data_file, '%5.2f ', data(row,col));
-%                 end
-%             end
-%             fprintf(data_file, '\n');
-%         end    
-%         fclose(data_file);
-%     end
 
 end

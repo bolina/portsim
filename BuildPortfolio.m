@@ -6,7 +6,7 @@ function [ p ] = BuildPortfolio(time_index, price_data, use_data, capital, PHOR,
 %price_data - matrix containing price data for stocks on many dates
 %use_data - matrix specifying which stocks are usable on a given date
 %capital - total capital allocated for building a portfolio
-%PHOR -
+%PHOR - 
 %num_use - number of usable stocks on any given day
 %alg - which construction algorithm should be used
 

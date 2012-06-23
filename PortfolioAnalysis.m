@@ -4,7 +4,7 @@ function [ c ] = PortfolioAnalysis(start_time, total_time, price_data, use_data,
 %Parameters
 %start_time - starting date for the simulation
 %total_time - total number of days to run the simulation
-%price_data - matrix containing price data for stocks on many dates
+%price_data - matrix containing price data for stocks over many days
 %use_data - matrix specifying which stocks are usable on a given date
 %capital - starting capital allocated for building a portfolio
 %NHOR - number of days to hold a portfolio before constructing a new one
@@ -20,7 +20,7 @@ function [ c ] = PortfolioAnalysis(start_time, total_time, price_data, use_data,
 
     %iterate over the price data until the starting date is found
     date_index = 1;
-    while( CompareDates( datevec(price_data(date_index, 1) ), date_info, 3) ~= 1)
+    while(CompareDates( datevec(price_data(date_index, 1) ), date_info, 3) ~= 1)
         date_index = date_index+1;
         assert(date_index <= dimen(1));
     end
@@ -31,12 +31,21 @@ function [ c ] = PortfolioAnalysis(start_time, total_time, price_data, use_data,
     %initialize current capital
     curr_cap = capital;
     
+    %open file for writing
+    %outfile = fopen('output.txt', 'w');
+    
     %loop over the number of days in the simulation constructing a new
     %portfolio at the beginning and after every NHOR days
     for k=1:total_time
         if (k == 1 || mod(k,NHOR) == 0)
             %build a portfolio at the current time using the selected algorithm
             port = BuildPortfolio(date_index, price_data, use_data, curr_cap, PHOR, num_use, alg);
+            fprintf(outfile, '%s ', datestr(price_data(date_index,1)) );
+%             fprintf(outfile, '%9.2e ', curr_cap);
+%             for i=1:length(port)
+%                fprintf(outfile, '%9.2e ', port(i) ); 
+%             end
+%             fprintf(outfile, '\n');
         end
         
         %calculate the capital value of the portfolio on each day and
@@ -46,10 +55,12 @@ function [ c ] = PortfolioAnalysis(start_time, total_time, price_data, use_data,
         %store the capital value in the capital array
         c(k) = curr_cap;
         
-        %increment the current time by one day
-        curr_time = addtodate(curr_time, 1, 'day');
+        %increment the time index to use data from the next time period
         date_index = date_index+1;
     end
+    
+    %writing is finished, close the file
+    %fclose(outfile);
 
     %helper function which returns the value of a portfolio at a given time
     function [ cap ] = CalcCapital(time_index, portfolio)

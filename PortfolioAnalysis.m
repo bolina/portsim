@@ -1,4 +1,4 @@
-function [ c ] = PortfolioAnalysis(start_time, total_time, price_data, use_data, capital, NHOR, PHOR, num_use, alg)
+function [ c ] = PortfolioAnalysis(start_time, total_time, price_data, use_data, capital, NHOR, PHOR, alg)
 %%Builds and evaluates portfolios over the given time period.
 
 %Parameters
@@ -10,6 +10,9 @@ function [ c ] = PortfolioAnalysis(start_time, total_time, price_data, use_data,
 %NHOR - number of days to hold a portfolio before constructing a new one
 %num_use - number of usable stocks on any given day
 %alg - which construction algorithm should be used
+
+%Return Values
+%c - capital value of the portfolio for each day of the simulation
 
     %if time is passed as a string, convert it to datenum
     curr_time = start_time;
@@ -39,8 +42,8 @@ function [ c ] = PortfolioAnalysis(start_time, total_time, price_data, use_data,
     for k=1:total_time
         if (k == 1 || mod(k,NHOR) == 0)
             %build a portfolio at the current time using the selected algorithm
-            port = BuildPortfolio(date_index, price_data, use_data, curr_cap, PHOR, num_use, alg);
-            fprintf(outfile, '%s ', datestr(price_data(date_index,1)) );
+            port = BuildPortfolio(date_index, price_data, use_data, curr_cap, PHOR, alg);
+%            fprintf(outfile, '%s ', datestr(price_data(date_index,1)) );
 %             fprintf(outfile, '%9.2e ', curr_cap);
 %             for i=1:length(port)
 %                fprintf(outfile, '%9.2e ', port(i) ); 

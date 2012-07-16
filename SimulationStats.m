@@ -1,10 +1,11 @@
-function [ ] = SimulationStats( c )
+function [ r ] = SimulationStats( c )
 %%Calculates and displays several summary statistics for the simulation
 
 %Parameters
 %c - array containing the capital valuations of the portfolios constructed
 %    for each day in the simulation
 
+    NHOR = 20;
     %average number of trading days in a year
     DAYS = 250;
     
@@ -46,10 +47,16 @@ function [ ] = SimulationStats( c )
         ann_crors(i) = cror;
     end
     
-    r = zeros(1, length(c));
+    periods = ceil(length(c)/NHOR);
+    r = zeros(1, periods);
+    index = 1;
     for i=1:length(c)
-        if(i>1)
-            r(i) = (c(i)-c(i-1))/c(i-1);
+        if (i == NHOR)
+            r(index) = (c(i)-c(1))/c(1);
+            index = index + 1;
+        elseif (mod(i,NHOR) == 0)
+            r(index) = (c(i)-c(i-NHOR))/c(i-NHOR);
+            index = index + 1;
         end
     end
     
@@ -68,7 +75,7 @@ function [ ] = SimulationStats( c )
     %calculate sterling ratio
     sterling = acror/abs(avg_draw-.1);
     
-    disp('Annual Cumulative Rate of Return:');
+    disp('Avg Annual Cumulative Rate of Return:');
     disp(acror);
     disp('Max Draw Downs:');
     disp(max_draws);

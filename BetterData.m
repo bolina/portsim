@@ -1,4 +1,4 @@
-function [ pr use ] = BetterData( num_stocks, num_days, M_F, sig_F, delta, gamma )
+function [ pr use ] = BetterData( num_stocks, num_days, M_F, sig_F, gamma )
 %%Generates data for a given number of stocks over a given number of days
 
 %Parameters    
@@ -6,7 +6,6 @@ function [ pr use ] = BetterData( num_stocks, num_days, M_F, sig_F, delta, gamma
 %num_days - # of days to generate data for
 %M_F - annual average rate of return for the market
 %sig_F -
-%delta -
 %gamma -
 
 %Return Values
@@ -35,36 +34,42 @@ function [ pr use ] = BetterData( num_stocks, num_days, M_F, sig_F, delta, gamma
     R = zeros(num_days, num_stocks);
     Rs = zeros(num_days,num_stocks);
     prices = ones(num_days, num_stocks);
-    
-    M_R = zeros(1, num_stocks);   
-    Y = zeros(1, num_stocks);
-    for k=1:num_stocks
-       Y(k) = normrnd(0,1);
-       M_R(k) = normrnd(delta, gamma);
-    end
+    delta = (1-lam_R)*M_F/sqrt(1-lam_R^2);
+
+    M_R = normrnd(delta, gamma, [1 num_stocks]);
     
     for i=2:num_days
        Z = normrnd(0,1);
-       del_F = M_F.*t + sig_F*Z*sqrt(t);
+       %del_F = M_F.*t + sig_F.*Z.*sqrt(t);
+       del_F = M_F.*t + sig_F.*Z.*t;
        for j=1:num_stocks
+           Y = normrnd(0,1);
            %Can't divide by 0
-           sig_R = max((lam_R + sqrt(1-lam_R^2)*(M_R(j)/M_F)), min_sig);
+           sig_R = max((lam_R + sqrt(1-lam_R^2).*(M_R(j)/M_F)), min_sig);
            sig_R = min(1, sig_R);
-           del_R = lam_R.*del_F + sqrt(1-lam_R^2).*(M_R(j).*t+sig_R.*Y(j)*sqrt(t));
+           %del_R = lam_R.*del_F + sqrt(1-lam_R^2).*(M_R(j).*t+sig_R.*Y.*sqrt(t));
+           del_R = lam_R.*del_F + sqrt(1-lam_R^2).*(M_R(j).*t+sig_R.*Y.*t);
            Rs(i,j) = del_R;
            R(i,j) = R(i-1,j) + del_R;
            prices(i,j) = exp(R(i,j));
        end
     end
-     disp(Rs);
-     disp(R);
-     disp(prices);
+%     disp(Rs);
+%     disp(R);
+%     disp(prices);
+    
+    rates = zeros(1, num_stocks);
+    for n=1:num_stocks
+        rates(n) = prices(num_days,n)-1;
+    end
 
+%     disp(rates);
+%     disp(M_R);
     %concatenate dates and prices matrices
     pr = [dates prices];
     
-    use = ones(num_days, num_stocks);
-    use = [dates use];
+     use = ones(num_days, num_stocks);
+     use = [dates use];
     
 end
 

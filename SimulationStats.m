@@ -1,11 +1,10 @@
-function [ r ] = SimulationStats( c )
+function [ r ] = SimulationStats( c, NHOR )
 %%Calculates and displays several summary statistics for the simulation
 
 %Parameters
 %c - array containing the capital valuations of the portfolios constructed
 %    for each day in the simulation
 
-    NHOR = 20;
     %average number of trading days in a year
     DAYS = 250;
     
@@ -77,6 +76,8 @@ function [ r ] = SimulationStats( c )
     
     disp('Avg Annual Cumulative Rate of Return:');
     disp(acror);
+    disp('Compounded Annual Rate of Return');
+    disp((c(end)/c(1))^(1/4)-1);
     disp('Max Draw Downs:');
     disp(max_draws);
     disp('Avg Annual Draw Down:');

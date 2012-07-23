@@ -1,4 +1,4 @@
-function [ p ] = BuildPortfolio(time_index, price_data, use_data, capital, PHOR, num_use, alg)
+function [ p ] = BuildPortfolio(time_index, price_data, use_data, capital, PHOR, alg)
 %%Returns an array contain
 
 %Parameters
@@ -6,8 +6,7 @@ function [ p ] = BuildPortfolio(time_index, price_data, use_data, capital, PHOR,
 %price_data - matrix containing price data for stocks on many dates
 %use_data - matrix specifying which stocks are usable on a given date
 %capital - total capital allocated for building a portfolio
-%PHOR - 
-%num_use - number of usable stocks on any given day
+%PHOR - size, in days, of the price history window 
 %alg - which construction algorithm should be used
 
     %construct the portfolio using the chosen algorithm
@@ -21,13 +20,19 @@ function [ p ] = BuildPortfolio(time_index, price_data, use_data, capital, PHOR,
     %construct a simple uniform portfolio placing an equal amount of
     %capital into each available stock
     function [ port ] = SimpUni()
-        unit_cap = capital/num_use;
         pr = price_data(time_index,2:end);
         us = use_data(time_index,2:end);
         port = pr.*us;
-        for i=1:length(port)
-            if (port(i)~=0)
-                port(i)=unit_cap/port(i);
+        num_use = 0;
+        for i =1:length(us)
+            if(us(i)==1)
+                num_use = num_use+1;
+            end
+        end
+        unit_cap = capital/num_use;
+        for j=1:length(port)
+            if (port(j)~=0)
+                port(j)=unit_cap/port(j);
             end
         end
     end

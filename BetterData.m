@@ -60,7 +60,6 @@ function [ pr use ] = BetterData( num_stocks, num_days, M_F, sig_F, gamma )
 %     disp(R);
 %     disp(prices);
     
-    disp(mean(prices(num_days,1:end)));
     %concatenate dates and prices matrices
     pr = [dates prices];
     

@@ -1,4 +1,4 @@
-function [ m r ] = LoadData(pricefile, usefile, numeric)
+function [ prices uses ] = LoadData(pricefile, usefile, numeric)
 %%Loads price and use data for stocks from the given text files
 
 %%Parameters
@@ -6,14 +6,18 @@ function [ m r ] = LoadData(pricefile, usefile, numeric)
 %usefile - name of text file to read use data from
 %numeric - boolean indicator if text file is all numeric data
 
+%%Return Values
+%prices - matrix containing dates and prices for stocks
+%uses - matrix containing dates and binary indicators for stocks
+
     if (numeric)
         %if file contains only numeric data, use built-in dlmread
-        m = dlmread(pricefile);
-        r = dlmread(usefile);
+        prices = dlmread(pricefile);
+        uses = dlmread(usefile);
     else
-        %if file contians mixed data use ReadData function
-        m = ReadData(pricefile);
-        r = ReadData(usefile);
+        %if file contains mixed data use ReadData function
+        prices = ReadData(pricefile);
+        uses = ReadData(usefile);
     end
 
     function [ data ] = ReadData(filename)

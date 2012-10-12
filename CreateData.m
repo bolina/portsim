@@ -11,7 +11,7 @@ function [ m r ] = CreateData(num_stocks, num_days, num_use, record)
 
 %Return Values
 %m - price data represented as a matrix of dates and prices
-%r - use data represented as dates and a zero and non-zero matrix
+%r - use data represented as a matrix of dates and binary use variables
 
     %Assertion to prevent indexing errors
     assert(num_use < num_stocks);

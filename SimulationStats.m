@@ -60,7 +60,7 @@ function [ r ] = SimulationStats( c, NHOR )
     end
     
     %risk free rate
-    rfr = 0.045;
+    rfr = 0.001;
     
     %avg annual cumulative rate of return
     acror = mean(ann_crors);
@@ -74,10 +74,11 @@ function [ r ] = SimulationStats( c, NHOR )
     %calculate sterling ratio
     sterling = acror/abs(avg_draw-.1);
     
+    %disp(ann_crors);
     disp('Avg Annual Cumulative Rate of Return:');
     disp(acror);
     disp('Compounded Annual Rate of Return');
-    disp((c(end)/c(1))^(1/4)-1);
+    disp((c(end)/c(1))^(1/num_years)-1);
     disp('Max Draw Downs:');
     disp(max_draws);
     disp('Avg Annual Draw Down:');

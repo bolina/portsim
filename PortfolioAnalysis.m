@@ -63,7 +63,7 @@ function [ c ] = PortfolioAnalysis(start_time, total_time, price_data, use_data,
     end
     
     %writing is finished, close the file
-    %fclose(outfile);
+%    fclose(outfile);
 
     %helper function which returns the value of a portfolio at a given time
     function [ cap ] = CalcCapital(time_index, portfolio)

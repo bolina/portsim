@@ -32,7 +32,6 @@ function [ pr use ] = BetterData( num_stocks, num_days, M_F, sig_F, gamma )
     end
     
     R = zeros(num_days, num_stocks);
-    Rs = zeros(num_days,num_stocks);
     prices = ones(num_days, num_stocks);
     delta = (1-lam_R)*M_F/sqrt(1-lam_R^2);
 
@@ -49,16 +48,10 @@ function [ pr use ] = BetterData( num_stocks, num_days, M_F, sig_F, gamma )
            sig_R = min(1, sig_R);
            %del_R = lam_R.*del_F + sqrt(1-lam_R^2).*(M_R(j).*t+sig_R.*Y(j).*sqrt(t));
            del_R = lam_R.*del_F + sqrt(1-lam_R^2).*(M_R(j).*t+sig_R.*Y(j).*t);
-           Rs(i,j) = del_R;
            R(i,j) = R(i-1,j) + del_R;
            prices(i,j) = exp(R(i,j));
        end
     end
-    
-%    plot(1:1000,prices(1:1000,1),1:1000,prices(1:1000,2),1:1000,prices(1:1000,3),1:1000,prices(1:1000,4),1:1000,prices(1:1000,5),1:1000,prices(1:1000,6),1:1000,prices(1:1000,7),1:1000,prices(1:1000,8),1:1000,prices(1:1000,9),1:1000,prices(1:1000,10));
-%     disp(Rs);
-%     disp(R);
-%     disp(prices);
     
     %concatenate dates and prices matrices
     pr = [dates prices];

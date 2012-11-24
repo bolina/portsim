@@ -14,6 +14,18 @@ function [ prices uses ] = LoadData(pricefile, usefile, numeric)
         %if file contains only numeric data, use built-in dlmread
         prices = dlmread(pricefile);
         uses = dlmread(usefile);
+        
+        format = 'yyyymmdd';
+        dates = prices(1,1:end);
+        for d=1:length(dates)
+            temp = num2str(dates(d));
+            dates(d) = datenum(temp,format);
+        end
+        prices(1,1:end) = dates;
+        uses(1,1:end) = dates;
+        
+        prices = prices';
+        uses = uses';
     else
         %if file contains mixed data use ReadData function
         prices = ReadData(pricefile);

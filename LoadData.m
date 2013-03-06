@@ -1,4 +1,5 @@
 function [ prices uses ] = LoadData(pricefile, usefile, numeric)
+%function [ prices uses ] = LoadData(pricefile, usefile, rfrfile, numeric)
 %%Loads price and use data for stocks from the given text files
 
 %%Parameters
@@ -26,6 +27,11 @@ function [ prices uses ] = LoadData(pricefile, usefile, numeric)
         
         prices = prices';
         uses = uses';
+        
+%         risk_free_r = dlmread(rfrfile);
+%         prices = [prices risk_free_r(1:end, 2)];
+%         dimen = size(uses);
+%         uses = [uses ones(dimen(1),1)];
     else
         %if file contains mixed data use ReadData function
         prices = ReadData(pricefile);

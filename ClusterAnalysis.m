@@ -1,14 +1,9 @@
-function [ c ] = PortfolioAnalysis(price_data, use_data)
+function [ c ] = ClusterAnalysis(price_data, use_data)
 %%Builds and evaluates portfolios over the given time period.
 
 %Parameters
-%start_time - starting date for the simulation
-%total_time - total number of days to run the simulation
 %price_data - matrix containing price data for stocks over many days
 %use_data - matrix specifying which stocks are usable on a given date
-%capital - starting capital allocated for building a portfolio
-%NHOR - number of days to hold a portfolio before constructing a new one
-%alg - which construction algorithm should be used
 
 %Return Values
 %c - capital value of the portfolio for each day of the simulation
@@ -41,18 +36,50 @@ function [ c ] = PortfolioAnalysis(price_data, use_data)
     %portfolio at the beginning and after every NHOR days
     for k=1:params.total_time
         if (k == 1 || mod(k,params.NHOR) == 0)
-            %get use data at the time of building the portfolio
             use = use_data(date_index, 2:end);
+            all_pr = price_data(1:date_index, 2:end);
             
-            %get price data for all stocks in the history window
             start_time = date_index-params.PHOR;
             pr = price_data(start_time:date_index, 2:end);
+            dim = size(pr);
             
-            %build a portfolio at the current time using the selected algorithm
-            port = BuildPortfolio(pr, use);
+            %break usable stocks into correlated clusters
+            clusters = ClusterStocks(params.k, all_pr, use);
+            
+            ports = zeros(params.k, length(use));
+            
+            %build a portfolio for each individual cluster
+            %
+            super_prices = zeros(dim(1),params.k);
+            for l=1:params.k
+                c_use = zeros(1,length(use));
+                members = clusters{l};
+                for s=1:length(members)
+                    c_use(members(s)) = 1;
+                    for t=1:dim(1)
+                       super_prices(t,l) =  super_prices(t,l) + pr(t,members(s));
+                    end
+                end
+                ports(l,:) = BuildPortfolio(pr, c_use);
+            end
+            
+            %denote each super stock as usable
+            super_use = ones(1, params.k);
+            
+            %build a portfolio at the current time using the super stocks
+            super_port = BuildPortfolio(super_prices, super_use);
+            
+            %the final portfolio will be constructed by multiplying the
+            %weight given to each super stock by the individual weights
+            %given to each stock within the super stock
+            port = zeros(1,length(use));
+            for u=1:length(super_port)
+                port = port+(super_port(u)*ports(u,:));
+            end 
             
             %Account for transaction costs when reallocating a portfolio
             curr_cap = curr_cap*(1-params.tr_cost);
+            
             shares = port*curr_cap;
             for n=1:length(shares)
                if (shares(n) > 0)

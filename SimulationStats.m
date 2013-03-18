@@ -1,4 +1,4 @@
-function [ ann_return ann_sharpe avg_dd ] = SimulationStats( c )
+function [ ann_return ann_sharpe avg_dd sterl] = SimulationStats( c )
 %%Calculates and displays several summary statistics for the simulation
 
 %Parameters
@@ -9,6 +9,7 @@ function [ ann_return ann_sharpe avg_dd ] = SimulationStats( c )
 %ann_return - annual rate of return for series c
 %ann_sharpe - annual sharpe ratio for series c
 %avg_dd - average annual maximum drawdown for series c
+%sterl - annual sterling ratio for series c
 
     %average number of trading days in a year
     DAYS = 250;
@@ -58,8 +59,15 @@ function [ ann_return ann_sharpe avg_dd ] = SimulationStats( c )
     daily_std = std(ror);
     
     ann_return = avg_daily*DAYS;
+    
+    %computing annual sharpe ratio
     ann_sharpe = (avg_daily/daily_std)*sqrt(250);
+    
+    %average annual maximum drawdown
     avg_dd = mean(max_draws);
+    
+    %computing annual sterling ratio
+    sterl = ann_return/(avg_dd-0.1);
     
 end
 
